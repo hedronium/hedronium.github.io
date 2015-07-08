@@ -29,11 +29,21 @@ $(function(){
 
 	init();
 
+	var angl = {
+		e15: Math.PI/12,
+		e30: Math.PI/6,
+		e45: Math.PI/4,
+		e60: Math.PI/3,
+		e90: Math.PI/2,
+	};
+
 	var side_length = 80;
 	var sphere_radius = 10;
-	var cylinder_radius = 5;
-	var cyclo_radius = (side_length/2)/Math.cos(Math.PI/6);
+	var cylinder_radius = 4;
+	var cyclo_radius = (side_length/2)/Math.cos(angl.e30);
 	var side_offset = Math.sqrt(Math.pow(cyclo_radius, 2) - Math.pow((side_length/2), 2));
+	var side_vert_offset = side_offset*Math.cos(angl.e60);
+	var side_hori_offset = side_offset*Math.sin(angl.e60);
 	var triangle_height = Math.sqrt(Math.pow(side_length, 2) - Math.pow((side_length/2), 2));
 
 
@@ -51,7 +61,7 @@ $(function(){
 	///////////////////////// GEOMETRY //////////////////////////
 
 	var sphere_geo = new THREE.SphereGeometry(sphere_radius, 50, 50);
-	var cylinder_geo = new THREE.CylinderGeometry(cylinder_radius, cylinder_radius, side_offset, 50);
+	var cylinder_geo = new THREE.CylinderGeometry(cylinder_radius, cylinder_radius, side_length, 50);
 
 	//////////////////////// END - GEOMETRY /////////////////////
 	// ------------------------------------------------------- //
@@ -78,8 +88,41 @@ $(function(){
 	// var low_top_ball_d = new THREE.Mesh(sphere_geo, main_mat);
 
 	var low_bot_beam_ab = new THREE.Mesh(cylinder_geo, main_mat);
+	low_bot_beam_ab.rotation.x = angl.e90;
+	low_bot_beam_ab.rotation.y = 0;
+	low_bot_beam_ab.rotation.z = angl.e30;
+
+	low_bot_beam_ab.position.x = -1*side_hori_offset;
+	low_bot_beam_ab.position.y = 0;
+	low_bot_beam_ab.position.z = -1*side_vert_offset;
+
+	scene.add(low_bot_beam_ab);
+
+
+
 	var low_bot_beam_bc = new THREE.Mesh(cylinder_geo, main_mat);
+	low_bot_beam_bc.rotation.x = angl.e90;
+	low_bot_beam_bc.rotation.y = 0;
+	low_bot_beam_bc.rotation.z = angl.e90;
+
+	low_bot_beam_bc.position.x = 0;
+	low_bot_beam_bc.position.y = 0;
+	low_bot_beam_bc.position.z = side_offset;
+
+	scene.add(low_bot_beam_bc);
+
+
+
 	var low_bot_beam_ca = new THREE.Mesh(cylinder_geo, main_mat);
+	low_bot_beam_ca.rotation.x = angl.e90;
+	low_bot_beam_ca.rotation.y = 0;
+	low_bot_beam_ca.rotation.z = -1*angl.e30;
+
+	low_bot_beam_ca.position.x = 1*side_hori_offset;
+	low_bot_beam_ca.position.y = 0;
+	low_bot_beam_ca.position.z = -1*side_vert_offset;
+
+	scene.add(low_bot_beam_ca);
 
 	// var low_bot_beam_ad = new THREE.Mesh(cylinder_geo, main_mat);
 	// var low_bot_beam_bd = new THREE.Mesh(cylinder_geo, main_mat);
