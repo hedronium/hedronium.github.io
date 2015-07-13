@@ -6,17 +6,17 @@ $(function(){
 		};
 
 		var unify = function (obj1,obj2) {
-		    var obj3 = {};
+			var obj3 = {};
 
-		    for (var attrname in obj1) { 
-		    	obj3[attrname] = obj1[attrname]; 
-		    }
+			for (var attrname in obj1) { 
+				obj3[attrname] = obj1[attrname]; 
+			}
 
-		    for (var attrname in obj2) { 
-		    	obj3[attrname] = obj2[attrname]; 
-		    }
+			for (var attrname2 in obj2) { 
+				obj3[attrname2] = obj2[attrname2]; 
+			}
 
-		    return obj3;
+			return obj3;
 		};
 
 		var win = $(window);
@@ -33,7 +33,7 @@ $(function(){
 		var tetras = {
 			bottom: null,
 			top: null
-		}
+		};
 
 		var rad = function (deg) {
 			return deg*Math.PI/180;
@@ -65,20 +65,20 @@ $(function(){
 				side_center_offset: side_center_offset,
 				vertical_side_length: vertical_side_length,
 				vertical_angle: vertical_angle
-			}
+			};
 		})();
 
 		var vals = unify(consts, calcs);
 
 		var geos = {
 			flatCylinder: new THREE.CylinderGeometry(
-				vals.cylinder_radius, vals.cylinder_radius, vals.side_length, 20
+				vals.cylinder_radius, vals.cylinder_radius, vals.side_length, 7
 			),
 			vertCylinder: new THREE.CylinderGeometry(
-				vals.cylinder_radius, vals.cylinder_radius, vals.vertical_side_length, 20
+				vals.cylinder_radius, vals.cylinder_radius, vals.vertical_side_length, 7
 			),
 			sphere: new THREE.SphereGeometry(
-				vals.sphere_radius, 50, 50
+				vals.sphere_radius, 25, 25
 			)
 		};
 
@@ -112,8 +112,8 @@ $(function(){
 
 				light.target = plane;
 
-				light.shadowMapWidth = 2048; // default is 512
-				light.shadowMapHeight = 2048; // default is 512
+				light.shadowMapWidth = 1024; // default is 512
+				light.shadowMapHeight = 1024; // default is 512
 
 
 				scene.add(light);
@@ -262,21 +262,24 @@ $(function(){
 
 		var sine = 0;
 
-		var animate = function () {
-			requestAnimationFrame(animate);
-
+		var tween = function () {
 			tetras.top.rotation.y = (tetras.top.rotation.y+0.02)%(2*Math.PI);
 			tetras.bottom.rotation.y = (tetras.top.rotation.y-0.005)%(2*Math.PI);
 
-			sine = (sine+1.1459)%360;
+			sine = (sine+2.5)%360;
 
 			tetras.top.position.y = 2*vals.tetra_height+37+(Math.sin(rad(sine))*17);
+		};
 
+		var animate = function () {
 			if (config.orbit_controls) {
 				controls.update();
 			}
 
+			tween();
 			render();
+
+			requestAnimationFrame(animate);
 		};
 
 		var init = function(conf) {
@@ -318,7 +321,7 @@ $(function(){
 				color: 0x333333, 
 				side: THREE.DoubleSide,
 				transparent: true,
-    			opacity: 0.5
+				opacity: 0.5
 			});
 
 			plane = new THREE.Mesh( geometry, material );
