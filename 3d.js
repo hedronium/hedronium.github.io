@@ -309,7 +309,7 @@ $(function(){
 			tetras.bottom.receiveShadow = true;
 
 			var geometry = new THREE.PlaneGeometry( 600, 600, 32 );
-			var material = new THREE.MeshBasicMaterial( {color: 0xeeeeee, side: THREE.DoubleSide} );
+			var material = new THREE.MeshBasicMaterial( {color: 0x333333, side: THREE.DoubleSide} );
 			plane = new THREE.Mesh( geometry, material );
 			plane.rotation.x = rad(90);
 			plane.receiveShadow = true;
