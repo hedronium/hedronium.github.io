@@ -84,12 +84,12 @@ $(function(){
 
 		var mats = {
 			main: new THREE.MeshLambertMaterial({
-				color: 0xffffff,
+				color: 0xFFFFFF,
 				shading: 'smooth',
 				wireframeLinewidth: 3
 			}),
 			beam: new THREE.MeshLambertMaterial({
-				color: 0xffffff,
+				color: 0xFFFFFF,
 				shading: 'smooth',
 				// wireframe: true,
 				wireframeLinewidth: 2
@@ -98,7 +98,7 @@ $(function(){
 
 		var lights = {
 			ambient: function () {
-				var light = new THREE.AmbientLight(0xA6A6A6);
+				var light = new THREE.AmbientLight(0xC4C4C4);
 				scene.add(light);
 			},
 			directional: function () {
@@ -107,13 +107,13 @@ $(function(){
 				light.position.y = 300;
 				light.position.z = 300;
 				light.castShadow = true;
-				light.shadowDarkness = 0.3;
+				light.shadowDarkness = 0.4;
 				// light.shadowCameraVisible = true;
 
 				light.target = plane;
 
-				light.shadowMapWidth = 1024; // default is 512
-				light.shadowMapHeight = 1024; // default is 512
+				light.shadowMapWidth = 1024*1.5; // default is 512
+				light.shadowMapHeight = 1024*1.5; // default is 512
 
 
 				scene.add(light);
@@ -282,6 +282,21 @@ $(function(){
 			requestAnimationFrame(animate);
 		};
 
+		var camera = function(x, y, z) {
+			if (!x) {
+				x = 0;
+				y = 180;
+				z = 150;
+			}
+
+			cameras.main = new THREE.PerspectiveCamera(90, 1, 0.1, 3000);
+			cameras.main.position.z = z;
+			cameras.main.position.y = y;
+			cameras.main.position.x = x;
+
+			cameras.main.lookAt(new THREE.Vector3(0, 120, 0));
+		};
+
 		var init = function(conf) {
 			config = unify(config, conf);
 
@@ -301,13 +316,6 @@ $(function(){
 				scene.add(axes);
 			}
 
-			cameras.main = new THREE.PerspectiveCamera(90, 1, 0.1, 3000);
-			cameras.main.position.z = 150;
-			cameras.main.position.y = 180;
-			cameras.main.position.x = 0;
-
-			resize(config.width, config.height);
-
 			meshes();
 
 			tetras.top.castShadow = true;
@@ -318,7 +326,7 @@ $(function(){
 
 			var geometry = new THREE.PlaneGeometry( 500, 500, 32 );
 			var material = new THREE.MeshBasicMaterial({
-				color: 0x333333, 
+				color: config.plane_color, 
 				side: THREE.DoubleSide,
 				transparent: true,
 				opacity: 0.5
@@ -340,23 +348,48 @@ $(function(){
 				controls.addEventListener('change', render);
 			}
 
-			cameras.main.lookAt(new THREE.Vector3(0, 120, 0));
+			camera();
+
+			resize(config.width, config.height);
 
 			animate();
 		};
 
 		return {
 			init: init,
-			resize: resize
+			resize: resize,
+			camera: camera
 		};
 	})();
 
 	var win = $(window);
+	var win_height = win.height();
+	var win_width = win.width();
+
+	var position = {
+		x: win_width*0.25,
+		y: win_height*0.2
+	};
+
+	var radius = win_width-position.x;
+	var vert_radius = win_height-position.y;
 
 	threedee.init({
 		axes: false,
 		orbit_controls: false,
-		height: win.height()*0.8,
+		height: win.height(),
 		width: win.width()*0.5,
+		plane_color: 0xFFA930,
+	});
+
+
+
+
+	$(document).mousemove(function(e){
+		var x = -((e.clientX-position.x)/radius)*150;
+		var z = Math.sqrt(Math.pow(150, 2) - Math.pow(x, 2));
+		var y = ((e.clientY)/vert_radius)*300;
+
+		threedee.camera(x, y, z);
 	});
 });
