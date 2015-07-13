@@ -72,10 +72,10 @@ $(function(){
 
 		var geos = {
 			flatCylinder: new THREE.CylinderGeometry(
-				vals.cylinder_radius, vals.cylinder_radius, vals.side_length, 50
+				vals.cylinder_radius, vals.cylinder_radius, vals.side_length, 20
 			),
 			vertCylinder: new THREE.CylinderGeometry(
-				vals.cylinder_radius, vals.cylinder_radius, vals.vertical_side_length, 50
+				vals.cylinder_radius, vals.cylinder_radius, vals.vertical_side_length, 20
 			),
 			sphere: new THREE.SphereGeometry(
 				vals.sphere_radius, 50, 50
@@ -87,7 +87,13 @@ $(function(){
 				color: 0xffffff,
 				shading: 'smooth',
 				wireframeLinewidth: 3
-			})
+			}),
+			beam: new THREE.MeshLambertMaterial({
+				color: 0xffffff,
+				shading: 'smooth',
+				// wireframe: true,
+				wireframeLinewidth: 2
+			}),
 		};
 
 		var lights = {
@@ -159,7 +165,7 @@ $(function(){
 
 			// <BEAMS - HORI>
 				var beam_bc = new THREE.Mesh(
-					geos.flatCylinder, mats.main
+					geos.flatCylinder, mats.beam
 				);
 
 				beam_bc.castShadow = true;
@@ -187,7 +193,7 @@ $(function(){
 
 			// <BEAMS - VERT>
 				var beam_ad = new THREE.Mesh(
-					geos.vertCylinder, mats.main
+					geos.vertCylinder, mats.beam
 				);
 
 				beam_ad.castShadow = true;
@@ -263,7 +269,6 @@ $(function(){
 			tetras.bottom.rotation.y = (tetras.top.rotation.y-0.005)%(2*Math.PI);
 
 			sine = (sine+1.1459)%360;
-			tetras.top.position.z = Math.sin(rad(sine))*(Math.PI/6);
 
 			tetras.top.position.y = 2*vals.tetra_height+37+(Math.sin(rad(sine))*17);
 
@@ -309,7 +314,13 @@ $(function(){
 			tetras.bottom.receiveShadow = true;
 
 			var geometry = new THREE.PlaneGeometry( 600, 600, 32 );
-			var material = new THREE.MeshBasicMaterial( {color: 0x333333, side: THREE.DoubleSide} );
+			var material = new THREE.MeshBasicMaterial({
+				color: 0x333333, 
+				side: THREE.DoubleSide,
+				transparent: true,
+    			opacity: 0.5
+			});
+
 			plane = new THREE.Mesh( geometry, material );
 			plane.rotation.x = rad(90);
 			plane.receiveShadow = true;
@@ -326,7 +337,7 @@ $(function(){
 				controls.addEventListener('change', render);
 			}
 
-			cameras.main.lookAt(new THREE.Vector3(0, 400, 0));
+			cameras.main.lookAt(new THREE.Vector3(0, 300, 0));
 
 			animate();
 		};
