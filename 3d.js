@@ -24,6 +24,8 @@ $(function(){
 		var renderer = null;
 		var controls = null;
 
+		var plane = null;
+
 		var cameras = {
 			main: null
 		};
@@ -82,7 +84,7 @@ $(function(){
 
 		var mats = {
 			main: new THREE.MeshLambertMaterial({
-				color: 0xeeeeee,
+				color: 0xffffff,
 				shading: 'smooth',
 				wireframeLinewidth: 3
 			})
@@ -95,14 +97,18 @@ $(function(){
 			},
 			directional: function () {
 				var light = new THREE.DirectionalLight( 0xffffff, 0.3 ); 
-				light.position.set( 1, 1, 1); 
-
-				light.shadowCameraLeft = -20; // or whatever value works for the scale of your scene
-				light.shadowCameraRight = 20;
-				light.shadowCameraTop = 20;
-				light.shadowCameraBottom = -20;
-
+				light.position.x = 300;
+				light.position.y = 300;
+				light.position.z = 300;
 				light.castShadow = true;
+				light.shadowDarkness = 0.3;
+				// light.shadowCameraVisible = true;
+
+				light.target = plane;
+
+				light.shadowMapWidth = 2048; // default is 512
+				light.shadowMapHeight = 2048; // default is 512
+
 
 				scene.add(light);
 			},
@@ -117,6 +123,9 @@ $(function(){
 					geos.sphere,
 					mats.main
 				);
+
+				ball_a.castShadow = true;
+				ball_a.receiveShadow = true;
 
 				ball_a.position.z = -1*vals.sphere_center_offset;
 
@@ -153,6 +162,9 @@ $(function(){
 					geos.flatCylinder, mats.main
 				);
 
+				beam_bc.castShadow = true;
+				beam_bc.receiveShadow = true;
+
 				beam_bc.rotation.z = rad(90);
 				beam_bc.position.z = vals.side_center_offset;
 
@@ -177,6 +189,9 @@ $(function(){
 				var beam_ad = new THREE.Mesh(
 					geos.vertCylinder, mats.main
 				);
+
+				beam_ad.castShadow = true;
+				beam_ad.receiveShadow = true;
 
 				beam_ad.rotation.x = rad(90)-vals.vertical_angle;
 				beam_ad.position.y = vals.tetra_height/2;
@@ -271,18 +286,6 @@ $(function(){
 			});
 
 			renderer.shadowMapEnabled = true;
-			renderer.shadowMapSoft = true;
-
-			renderer.shadowCameraNear = 3;
-			renderer.shadowCameraFar = 500;
-			renderer.shadowCameraFov = 50;
-
-			renderer.shadowMapBias = 0.0039;
-			renderer.shadowMapDarkness = 0.5;
-			renderer.shadowMapWidth = 1024;
-			renderer.shadowMapHeight = 1024;
-
-			renderer.shadowMapEnabled = true;
 
 
 			if (config.axes) {
@@ -290,7 +293,7 @@ $(function(){
 				scene.add(axes);
 			}
 
-			cameras.main = new THREE.PerspectiveCamera(90, 1, 0.1, 500);
+			cameras.main = new THREE.PerspectiveCamera(90, 1, 0.1, 3000);
 			cameras.main.position.z = 100;
 			cameras.main.position.y = 100;
 			cameras.main.position.x = 0;
@@ -300,14 +303,14 @@ $(function(){
 			meshes();
 
 			tetras.top.castShadow = true;
-			//tetras.top.receiveShadow = true;
+			tetras.top.receiveShadow = true;
 
 			tetras.bottom.castShadow = true;
-			//tetras.bottom.receiveShadow = true;
+			tetras.bottom.receiveShadow = true;
 
 			var geometry = new THREE.PlaneGeometry( 600, 600, 32 );
 			var material = new THREE.MeshBasicMaterial( {color: 0xeeeeee, side: THREE.DoubleSide} );
-			var plane = new THREE.Mesh( geometry, material );
+			plane = new THREE.Mesh( geometry, material );
 			plane.rotation.x = rad(90);
 			plane.receiveShadow = true;
 
@@ -334,5 +337,7 @@ $(function(){
 		};
 	})();
 
-	threedee.init();
+	threedee.init({
+		axes: false
+	});
 });
