@@ -263,10 +263,10 @@ $(function(){
 		var sine = 0;
 
 		var tween = function () {
-			tetras.top.rotation.y = (tetras.top.rotation.y+0.02)%(2*Math.PI);
+			tetras.top.rotation.y = (tetras.top.rotation.y+0.01)%(2*Math.PI);
 			tetras.bottom.rotation.y = (tetras.top.rotation.y-0.005)%(2*Math.PI);
 
-			sine = (sine+2.5)%360;
+			sine = (sine+1.2)%360;
 
 			tetras.top.position.y = 2*vals.tetra_height+37+(Math.sin(rad(sine))*17);
 		};
