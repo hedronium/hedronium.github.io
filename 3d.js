@@ -302,11 +302,11 @@ $(function(){
 			}
 
 			cameras.main = new THREE.PerspectiveCamera(90, 1, 0.1, 3000);
-			cameras.main.position.z = 100;
-			cameras.main.position.y = 100;
+			cameras.main.position.z = 150;
+			cameras.main.position.y = 180;
 			cameras.main.position.x = 0;
 
-			resize();
+			resize(config.width, config.height);
 
 			meshes();
 
@@ -316,7 +316,7 @@ $(function(){
 			tetras.bottom.castShadow = true;
 			tetras.bottom.receiveShadow = true;
 
-			var geometry = new THREE.PlaneGeometry( 600, 600, 32 );
+			var geometry = new THREE.PlaneGeometry( 500, 500, 32 );
 			var material = new THREE.MeshBasicMaterial({
 				color: 0x333333, 
 				side: THREE.DoubleSide,
@@ -340,7 +340,7 @@ $(function(){
 				controls.addEventListener('change', render);
 			}
 
-			cameras.main.lookAt(new THREE.Vector3(0, 300, 0));
+			cameras.main.lookAt(new THREE.Vector3(0, 120, 0));
 
 			animate();
 		};
@@ -351,7 +351,12 @@ $(function(){
 		};
 	})();
 
+	var win = $(window);
+
 	threedee.init({
-		axes: false
+		axes: false,
+		orbit_controls: false,
+		height: win.height()*0.8,
+		width: win.width()*0.5,
 	});
 });
