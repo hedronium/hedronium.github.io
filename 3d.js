@@ -1,204 +1,338 @@
 $(function(){
-	var win = $(window);
-	var win_height = win.height();
-	var win_width = win.width();
+	var threedee = (function(){
+		var config = {
+			orbit_controls: true,
+			axes: true
+		};
 
-	// World
-	var scene = new THREE.Scene();
-	var camera = new THREE.PerspectiveCamera(90, win_width/win_height, 0.1, 500);
-	camera.position.z = 100;
-	camera.position.y = 20;
-	camera.position.x = 0;
+		var unify = function (obj1,obj2) {
+		    var obj3 = {};
 
-	var axes = new THREE.AxisHelper(600);
-	scene.add(axes);
+		    for (var attrname in obj1) { 
+		    	obj3[attrname] = obj1[attrname]; 
+		    }
 
-	var renderer = new THREE.WebGLRenderer({
-		'precision': 'highp',
-		'alpha': true,
-		'antialias': true,
-		'maxLights': 10
-	});
+		    for (var attrname in obj2) { 
+		    	obj3[attrname] = obj2[attrname]; 
+		    }
 
-	renderer.shadowMapEnabled = true;
+		    return obj3;
+		};
+
+		var win = $(window);
+		var scene = null;
+		var renderer = null;
+		var controls = null;
+
+		var cameras = {
+			main: null
+		};
+
+		var tetras = {
+			bottom: null,
+			top: null
+		}
+
+		var rad = function (deg) {
+			return deg*Math.PI/180;
+		};
+
+		var buzz = function(funcs) {
+			for (var func in funcs) {
+				if (typeof funcs[func] === "function") {
+					funcs[func]();
+				}
+			}
+		};
+
+		var consts = {
+			cylinder_radius: 3,
+			sphere_radius: 10,
+			side_length: 80,
+			tetra_height: 65
+		};
+
+		var calcs = (function(){
+			var sphere_center_offset = (consts.side_length/2)/Math.cos(rad(30));
+			var side_center_offset = sphere_center_offset*Math.sin(rad(30));
+			var vertical_side_length = Math.sqrt(Math.pow(sphere_center_offset, 2) + Math.pow(consts.tetra_height, 2));
+			var vertical_angle = Math.atan(consts.tetra_height/sphere_center_offset);
+
+			return {
+				sphere_center_offset: sphere_center_offset,
+				side_center_offset: side_center_offset,
+				vertical_side_length: vertical_side_length,
+				vertical_angle: vertical_angle
+			}
+		})();
+
+		var vals = unify(consts, calcs);
+
+		var geos = {
+			flatCylinder: new THREE.CylinderGeometry(
+				vals.cylinder_radius, vals.cylinder_radius, vals.side_length, 50
+			),
+			vertCylinder: new THREE.CylinderGeometry(
+				vals.cylinder_radius, vals.cylinder_radius, vals.vertical_side_length, 50
+			),
+			sphere: new THREE.SphereGeometry(
+				vals.sphere_radius, 50, 50
+			)
+		};
+
+		var mats = {
+			main: new THREE.MeshLambertMaterial({
+				color: 0xeeeeee,
+				shading: 'smooth',
+				wireframeLinewidth: 3
+			})
+		};
+
+		var lights = {
+			ambient: function () {
+				var light = new THREE.AmbientLight(0xA6A6A6);
+				scene.add(light);
+			},
+			directional: function () {
+				var light = new THREE.DirectionalLight( 0xffffff, 0.3 ); 
+				light.position.set( 1, 1, 1); 
+
+				light.shadowCameraLeft = -20; // or whatever value works for the scale of your scene
+				light.shadowCameraRight = 20;
+				light.shadowCameraTop = 20;
+				light.shadowCameraBottom = -20;
+
+				light.castShadow = true;
+
+				scene.add(light);
+			},
+			spot: null
+		};
+
+		var meshes = function () {
+			var tetra = new THREE.Object3D();
+
+			// <BALLS>
+				var ball_a = new THREE.Mesh(
+					geos.sphere,
+					mats.main
+				);
+
+				ball_a.position.z = -1*vals.sphere_center_offset;
+
+				var ball_aa = new THREE.Object3D();
+				ball_aa.add(ball_a);
+
+				tetra.add(ball_aa);
+
+				var ball_b = ball_a.clone();
+				var ball_bb = new THREE.Object3D();
+				ball_bb.add(ball_b);
+
+				ball_bb.rotation.y = rad(120);
+
+				tetra.add(ball_bb);
+
+				var ball_c = ball_a.clone();
+				var ball_cc = new THREE.Object3D();
+				ball_cc.add(ball_c);
+
+				ball_cc.rotation.y = rad(-120);
+
+				tetra.add(ball_cc);
+
+				ball_d = ball_a.clone();
+				ball_d.position.z = 0;
+				ball_d.position.y = vals.tetra_height;
+
+				tetra.add(ball_d);
+			// </BALLS>
+
+			// <BEAMS - HORI>
+				var beam_bc = new THREE.Mesh(
+					geos.flatCylinder, mats.main
+				);
+
+				beam_bc.rotation.z = rad(90);
+				beam_bc.position.z = vals.side_center_offset;
+
+				var beam_bcp = new THREE.Object3D();
+				beam_bcp.add(beam_bc);
+				tetra.add(beam_bcp);
+
+				var beam_ab = beam_bc.clone();
+				var beam_abp = new THREE.Object3D();
+				beam_abp.add(beam_ab);
+				beam_abp.rotation.y = rad(-120);
+				tetra.add(beam_abp);
+
+				var beam_ac = beam_bc.clone();
+				var beam_acp = new THREE.Object3D();
+				beam_acp.add(beam_ac);
+				beam_acp.rotation.y = rad(120);
+				tetra.add(beam_acp);
+			// </BEAMS - HORI>
+
+			// <BEAMS - VERT>
+				var beam_ad = new THREE.Mesh(
+					geos.vertCylinder, mats.main
+				);
+
+				beam_ad.rotation.x = rad(90)-vals.vertical_angle;
+				beam_ad.position.y = vals.tetra_height/2;
+				beam_ad.position.z = -(beam_ad.position.y*Math.tan(beam_ad.rotation.x));
+
+				var beam_adp = new THREE.Object3D();
+				beam_adp.add(beam_ad);
+				
+				tetra.add(beam_adp);
+
+				var beam_bd = beam_ad.clone();
+				var beam_bdp = new THREE.Object3D();
+				beam_bdp.add(beam_bd);
+				beam_bdp.rotation.y = rad(120);
+				
+				tetra.add(beam_bdp);
+
+				var beam_cd = beam_ad.clone();
+				var beam_cdp = new THREE.Object3D();
+				beam_cdp.add(beam_cd);
+				beam_cdp.rotation.y = rad(-120);
+				
+				tetra.add(beam_cdp);
+			// </BEAMS - VERT>
+
+			scene.add(tetra);
+
+			var tetra_b = tetra.clone();
+			tetra_b.position.y = 2*vals.tetra_height+30;
+			tetra_b.rotation.x = rad(180);
+
+			var tetra_bp = new THREE.Object3D();
+			tetra_bp.add(tetra_b);
+
+			scene.add(tetra_bp);
+
+			tetras.bottom = tetra;
+			tetras.top = tetra_b;
+		};
+
+		var resize = function (width, height) {
+			if (!width) {
+				width = win.width();
+			}
+
+			if (!height) {
+				height = win.height();
+			}
+
+			renderer.setSize(width, height);
+			cameras.main.aspect = width/height;
+			cameras.main.updateProjectionMatrix();
+		};
+
+		var domify = function () {
+			$("#target").append(renderer.domElement);
+		};
+
+		var render = function () {
+			renderer.render(scene, cameras.main);
+		};
+
+		var sine = 0;
+
+		var animate = function () {
+			requestAnimationFrame(animate);
+
+			tetras.top.rotation.y = (tetras.top.rotation.y+0.02)%(2*Math.PI);
+			tetras.bottom.rotation.y = (tetras.top.rotation.y-0.005)%(2*Math.PI);
+
+			sine = (sine+1.1459)%360;
+			tetras.top.position.z = Math.sin(rad(sine))*(Math.PI/6);
+
+			tetras.top.position.y = 2*vals.tetra_height+37+(Math.sin(rad(sine))*17);
+
+			if (config.orbit_controls) {
+				controls.update();
+			}
+
+			render();
+		};
+
+		var init = function(conf) {
+			config = unify(config, conf);
+
+			scene = new THREE.Scene();
+			renderer = new THREE.WebGLRenderer({
+				'precision': 'highp',
+				'alpha': true,
+				'antialias': true,
+				'maxLights': 10
+			});
+
+			renderer.shadowMapEnabled = true;
+			renderer.shadowMapSoft = true;
+
+			renderer.shadowCameraNear = 3;
+			renderer.shadowCameraFar = 500;
+			renderer.shadowCameraFov = 50;
+
+			renderer.shadowMapBias = 0.0039;
+			renderer.shadowMapDarkness = 0.5;
+			renderer.shadowMapWidth = 1024;
+			renderer.shadowMapHeight = 1024;
+
+			renderer.shadowMapEnabled = true;
 
 
-	var init = function(){
-		win_height = win.height();
-		win_width = win.width();
+			if (config.axes) {
+				var axes = new THREE.AxisHelper(600);
+				scene.add(axes);
+			}
 
-		renderer.setSize(win_width, win_height);
-		camera.aspect = win_width/win_height;
-		camera.updateProjectionMatrix();
-	};
+			cameras.main = new THREE.PerspectiveCamera(90, 1, 0.1, 500);
+			cameras.main.position.z = 100;
+			cameras.main.position.y = 100;
+			cameras.main.position.x = 0;
 
-	init();
+			resize();
 
-	// Angles 
-	var angl = {
-		e15: Math.PI/12,
-		e30: Math.PI/6,
-		e45: Math.PI/4,
-		e60: Math.PI/3,
-		e90: Math.PI/2,
-	};
+			meshes();
 
-	var x_axis = new THREE.Vector3(1,0,0);
-	var y_axis = new THREE.Vector3(0,1,0);
-	var z_axis = new THREE.Vector3(0,0,1);
+			tetras.top.castShadow = true;
+			//tetras.top.receiveShadow = true;
 
-	var worldRotate = function (object, axis, radians) {
-		rotWorldMatrix = new THREE.Matrix4();
-		rotWorldMatrix.makeRotationAxis(axis.normalize(), radians);
-		rotWorldMatrix.multiply(object.matrix);
-		object.matrix = rotWorldMatrix;
-		// object.rotation.setEulerFromRotationMatrix(object.matrix, object.scale);
-	};
+			tetras.bottom.castShadow = true;
+			//tetras.bottom.receiveShadow = true;
 
-	// Calculations
-	var side_length = 80;
-	var sphere_radius = 10;
-	var cylinder_radius = 4;
-	var tetra_height = 65;
-	var cyclo_radius = (side_length/2)/Math.cos(angl.e30);
-	var side_offset = Math.sqrt(Math.pow(cyclo_radius, 2) - Math.pow((side_length/2), 2));
-	var side_dept_offset = side_offset*Math.cos(angl.e60);
-	var side_hori_offset = side_offset*Math.sin(angl.e60);
-	var tetra_depth = Math.sqrt(Math.pow(side_length, 2) - Math.pow((side_length/2), 2));
-	var tetra_vert_angle = Math.atan(tetra_height/cyclo_radius);
-	var vert_cylinder_length = Math.sqrt(Math.pow(cyclo_radius, 2) + Math.pow((tetra_height), 2));
+			var geometry = new THREE.PlaneGeometry( 600, 600, 32 );
+			var material = new THREE.MeshBasicMaterial( {color: 0xeeeeee, side: THREE.DoubleSide} );
+			var plane = new THREE.Mesh( geometry, material );
+			plane.rotation.x = rad(90);
+			plane.receiveShadow = true;
 
-	console.log(vert_cylinder_length);
+			scene.add( plane );
 
-	///////////////////////// MATERIALS /////////////////////////
+			buzz(lights);
 
-	var main_mat = new THREE.MeshLambertMaterial({
-		color: 0xffffff,
-		shading: 'smooth',
-		// wireframe: true,
-		wireframeLinewidth: 3
-	});
+			domify();
 
-	///////////////////// END - MATERIALS ///////////////////////
-	// ------------------------------------------------------- //
-	///////////////////////// GEOMETRY //////////////////////////
+			if (config.orbit_controls) {
+				controls = new THREE.OrbitControls(cameras.main);
+				controls.damping = 0.2;
+				controls.addEventListener('change', render);
+			}
 
-	var sphere_geo = new THREE.SphereGeometry(sphere_radius, 50, 50);
-	var cylinder_geo = new THREE.CylinderGeometry(cylinder_radius, cylinder_radius, side_length, 50);
-	var vert_cylinder_geo = new THREE.CylinderGeometry(cylinder_radius, cylinder_radius, vert_cylinder_length, 50);
+			cameras.main.lookAt(new THREE.Vector3(0, 400, 0));
 
-	//////////////////////// END - GEOMETRY /////////////////////
-	// ------------------------------------------------------- //
-	/////////////////////////  MESHES  //////////////////////////
+			animate();
+		};
 
-	// Balls
-	var low_bot_ball_a = new THREE.Mesh(sphere_geo, main_mat);
-	low_bot_ball_a.position.z = -1*(tetra_depth-side_offset);
-	scene.add(low_bot_ball_a);
+		return {
+			init: init,
+			resize: resize
+		};
+	})();
 
-	var low_bot_ball_b = new THREE.Mesh(sphere_geo, main_mat);
-	low_bot_ball_b.position.z = side_offset;
-	low_bot_ball_b.position.x = -1*(side_length/2);
-	scene.add(low_bot_ball_b);
-
-	var low_bot_ball_c = new THREE.Mesh(sphere_geo, main_mat);
-	low_bot_ball_c.position.z = side_offset;
-	low_bot_ball_c.position.x = side_length/2;
-	scene.add(low_bot_ball_c);
-
-	var low_top_ball_d = new THREE.Mesh(sphere_geo, main_mat);
-	low_top_ball_d.position.y = tetra_height;
-	scene.add(low_top_ball_d);
-
-
-	// Beams
-	var low_bot_beam_ab = new THREE.Mesh(cylinder_geo, main_mat);
-	low_bot_beam_ab.rotation.x = angl.e90;
-	low_bot_beam_ab.rotation.z = angl.e30;
-
-	low_bot_beam_ab.position.x = -1*side_hori_offset;
-	low_bot_beam_ab.position.z = -1*side_dept_offset;
-
-	scene.add(low_bot_beam_ab);
-
-
-
-	var low_bot_beam_bc = new THREE.Mesh(cylinder_geo, main_mat);
-	low_bot_beam_bc.rotation.x = angl.e90;
-	low_bot_beam_bc.rotation.z = angl.e90;
-
-	low_bot_beam_bc.position.z = side_offset;
-
-	scene.add(low_bot_beam_bc);
-
-
-
-	var low_bot_beam_ca = new THREE.Mesh(cylinder_geo, main_mat);
-	low_bot_beam_ca.rotation.x = angl.e90;
-	low_bot_beam_ca.rotation.z = -1*angl.e30;
-
-	low_bot_beam_ca.position.x = 1*side_hori_offset;
-	low_bot_beam_ca.position.z = -1*side_dept_offset;
-
-	scene.add(low_bot_beam_ca);
-
-	var low_bot_beam_ad = new THREE.Mesh(vert_cylinder_geo, main_mat);
-	low_bot_beam_ad.rotation.x = angl.e90 - tetra_vert_angle;
-
-	low_bot_beam_ad.position.y = tetra_height/2;
-	low_bot_beam_ad.position.z = -1*(tetra_height/2)/Math.tan(tetra_vert_angle);
-
-	scene.add(low_bot_beam_ad);
-
-	var low_bot_beam_bd = new THREE.Mesh(cylinder_geo, main_mat);
-	worldRotate(low_bot_beam_bd, z_axis, -2*angl.e60);
-	worldRotate(low_bot_beam_bd, x_axis, angl.e90 - tetra_vert_angle);
-	
-
-	scene.add(low_bot_beam_bd);
-
-
-	// var low_bot_beam_cd = new THREE.Mesh(cylinder_geo, main_mat);
-
-
-	////////////////////////  END - MESHES  /////////////////////
-	// ------------------------------------------------------- //
-	///////////////////////// LIGHTS ////////////////////////////
-
-	var ambient_light = new THREE.AmbientLight(0xA6A6A6);
-	scene.add(ambient_light);
-
-	var directional_light = new THREE.DirectionalLight( 0xffffff, 0.3 ); 
-	directional_light.position.set( 0, 1, 0 ); 
-	scene.add(directional_light);
-
-	//////////////////////  END - LIGHTS  ///////////////////////
-
-
-
-	var render = function() {
-		renderer.render(scene, camera);
-	};
-
-
-	camera.lookAt(scene.position);
-
-	var controls = new THREE.OrbitControls( camera );
-	controls.damping = 0.2;
-	controls.addEventListener( 'change', render );
-
-	win.resize(function(){
-		init();
-		render();
-	});
-
-	$("#target").append(renderer.domElement);
-	render();
-
-	var animate = function() {
-		requestAnimationFrame(animate);
-		controls.update();
-	};
-
-	animate();
+	threedee.init();
 });
