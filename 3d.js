@@ -78,7 +78,7 @@ $(function(){
 				vals.cylinder_radius, vals.cylinder_radius, vals.vertical_side_length, 7
 			),
 			sphere: new THREE.SphereGeometry(
-				vals.sphere_radius, 25, 25
+				vals.sphere_radius, 22, 22
 			)
 		};
 
@@ -108,12 +108,11 @@ $(function(){
 				light.position.z = 300;
 				light.castShadow = true;
 				light.shadowDarkness = 0.4;
-				// light.shadowCameraVisible = true;
 
 				light.target = plane;
 
-				light.shadowMapWidth = 1024*1.5; // default is 512
-				light.shadowMapHeight = 1024*1.5; // default is 512
+				light.shadowMapWidth = 1024; // default is 512
+				light.shadowMapHeight = 1024; // default is 512
 
 
 				scene.add(light);
@@ -289,7 +288,13 @@ $(function(){
 				z = 150;
 			}
 
-			cameras.main = new THREE.PerspectiveCamera(90, 1, 0.1, 3000);
+			cameras.main = new THREE.PerspectiveCamera(
+				90, 
+				config.width/config.height, 
+				0.1, 
+				3000
+			);
+			
 			cameras.main.position.z = z;
 			cameras.main.position.y = y;
 			cameras.main.position.x = x;
@@ -386,9 +391,9 @@ $(function(){
 
 
 	$(document).mousemove(function(e){
-		var x = -((e.clientX-position.x)/radius)*150;
+		var x = -((e.clientX-position.x)/radius)*150+40;
 		var z = Math.sqrt(Math.pow(150, 2) - Math.pow(x, 2));
-		var y = ((e.clientY)/vert_radius)*300;
+		var y = ((e.clientY)/vert_radius)*300+20;
 
 		threedee.camera(x, y, z);
 	});
