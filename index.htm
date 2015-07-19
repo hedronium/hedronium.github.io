@@ -2,18 +2,131 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>3D</title>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r71/three.min.js"></script>
-	<script src="OrbitControls.js"></script>
+	<meta name="viewport" content="width=device-width">
 
-	<script src="3d.js"></script>
-	<link rel="stylesheet" href="index.css">
+	<title>Hedronium</title>
+
+	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css">
+	<link rel="stylesheet" href="styles/fonts/bebas/BebasNeueBold-Regular.css">
+	<link rel="stylesheet" href="styles/fonts/social/css/hedronium-social.css">
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,700,800' rel='stylesheet' type='text/css'>
+
+	<link rel="stylesheet" href="styles/hedronium.css">
 </head>
 <body>
-	<div id="target" class="3d target"></div>
+	<div id="svg" class="svg target">
+		<object type="image/svg+xml" data="images/logo.svg">
+			<img src="images/logo.png" alt="Hedronium Logo">
+		</object>
+	</div>
+
+	<div id="target" class="threed target hidden"></div>
+
 	<section class="main">
-		<h1>Hi, We're Solidew.</h1>
+		<section class="intro">
+			<h1><strong>Hedron</strong>ium</h1>
+
+			<object type="image/svg+xml" data="images/textual.svg">
+				<img src="images/textual.png" alt="Hedronium">
+			</object>
+
+			<p class="tagline">
+				<span>#</span>
+				<span id="typist" class="typist">We code stuff when we're bored. </span>
+			</p>
+
+			<div class="social">
+				<a href="https://github.com/hedronium" class="icon-github" title="Hedronium Github Profile" target="_blank"></a>
+				<a href="https://www.facebook.com/hedronium" class="icon-facebook" title="Hedronium Facebook Page" target="_blank"></a>
+			</div>
+		</section>
+		<section class="which">
+			<h2>Stuff We Made</h2>
+			<section class="projects">
+				<div class="row">
+					<a class="project" href="https://github.com/hedronium/Casus" target="_blank">
+						<div class="image">
+							<object type="image/svg+xml" data="images/casus.svg">
+								<img src="images/casus.png" alt="Casus Icon">
+							</object>
+						</div>
+						<h3>Casus</h3>
+						<p>A library written for PHP that helps to securely generate random data.</p>
+					</a>
+					<a class="project" href="https://github.com/hedronium/SpacelessBlade" target="_blank">
+						<div class="image">
+							<object type="image/svg+xml" data="images/spaceless-blade.svg">
+								<img src="images/spaceless-blade.png" alt="Casus Icon">
+							</object>
+						</div>
+						<h3>Spaceless Blade</h3>
+						<p>Adds a <code>@spaceless</code> tag to Laravel's blade templating engine. (works like in Twig)</p>
+					</a>
+				</div>
+			</section>
+		</section>
+		<section class="who">
+			<h2>Who We Are</h2>
+			<blockquote class="desc">
+				A breed of highly advanced tetrahedral robots planning world domination. (JK, we're college students)
+			</blockquote>
+			<div class="faces">
+				<div class="face">
+					<div class="pic">
+						<img src="images/faces/nahiyan.jpg" alt="Nahiyan Alamgir">
+					</div>
+					<h3><em>Nahiyan</em> Alamgir</h3>
+					<p>I'm the Boss. Deal with it.</p>
+					<div class="social">
+						<a href="https://www.facebook.com/Nahiyan123" class="icon-facebook" target="_blank"></a>
+						<a href="" class="icon-github" target="_blank"></a>
+					</div>
+				</div>
+				<div class="face">
+					<div class="pic">
+						<img src="images/faces/omran.jpg" alt="Omran Jamal">
+					</div>
+					<h3><em>Omran</em> Jamal</h3>
+					<p>Don't believe Nahiyan. I'm the real boss.</p>
+					<div class="social">
+						<a href="https://facebook.com/omran.jamal" class="icon-facebook" target="_blank"></a>
+						<a href="https://github.com/omranjamal" class="icon-github" target="_blank"></a>
+						<a href="https://twitter.com/omranjamal" class="icon-twitter" target="_blank"></a>
+						<a href="http://omranjamal.me" class="icon-web" target="_blank"></a>
+					</div>
+				</div>
+				<div class="face">
+					<div class="pic">
+						<img src="images/faces/shishir.jpg" alt="Shishir Chakraborty">
+					</div>
+					<h3><em>Shishir</em> Chakraborty</h3>
+					<p>Ahem! Hedronium has no Leaders.</p>
+					<div class="social">
+						<a href="https://www.facebook.com/shishir.chakraborty" class="icon-facebook" target="_blank"></a>
+						<a href="" class="icon-github" target="_blank"></a>
+					</div>
+				</div>
+				<div class="face">
+					<div class="pic">
+						<img src="images/faces/aniruddha.jpg" alt="Aniruddha Chakraborty">
+					</div>
+					<h3><em>Aniruddha</em> Chakraborty</h3>
+					<p>Shishir is Lying. We are actually lead by intelligent monkeys from Pluto.</p>
+					<div class="social">
+						<a href="https://www.facebook.com/aniruddha.chakraborty.5817" class="icon-facebook" target="_blank"></a>
+						<a href="" class="icon-github" target="_blank"></a>
+					</div>
+				</div>
+			</div>
+		</section>
 	</section>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r71/three.min.js"></script>
+
+	<script src="js/3d.js"></script>
+	<script src="bower_components/typed.js/dist/typed.min.js"></script>
+	<script src="js/modernizer.js"></script>
+	<script src="js/hedronium.js"></script>
 </body>
 </html>

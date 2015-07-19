@@ -1,0 +1,19 @@
+{
+  "name": "Hedronium",
+  "version": "0.1.0",
+  "authors": [
+    "Omran Jamal <o.jamal97@gmail.com>"
+  ],
+  "description": "Hedronium Homepage",
+  "homepage": "http://hedronium.github.io",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "typed.js": "*"
+  }
+}
