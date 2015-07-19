@@ -22,17 +22,17 @@ $(function(){
 	});
 
 	var recalc = function() {
-		var intro_section = $('.intro');
-		var intro_height = intro_section.height();
+		// var intro_section = $('.intro');
+		// var intro_height = intro_section.height();
 
-		var px = ((win_height-intro_height)/8);
+		// var px = ((win_height-intro_height)/8);
 
-		if ($('body').css('margin-bottom') === '1px') {
-			px = ((win_height-intro_height)/2);
-		}
+		// if ($('body').css('margin-bottom') === '1px') {
+		// 	px = ((win_height-intro_height)/2);
+		// }
 
-		intro_section.css('margin-bottom', px+'px');
-		$('.main').css('padding-top', px+'px');
+		// intro_section.css('margin-bottom', px+'px');
+		// $('.main').css('padding-top', px+'px');
 	};
 
 	recalc();

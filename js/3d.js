@@ -336,7 +336,7 @@ var threedee = (function(){
 			color: config.plane_color, 
 			side: THREE.DoubleSide,
 			transparent: true,
-			opacity: 0.8
+			opacity: 0.4
 		});
 
 		plane = new THREE.Mesh( geometry, material );
