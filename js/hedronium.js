@@ -18,7 +18,7 @@ $(function(){
 	typist.typed({
 		strings: [tagline],
 		typeSpeed: 1,
-		cursorChar: "",
+		cursorChar: "&#9608;",
 	});
 
 	var recalc = function() {
