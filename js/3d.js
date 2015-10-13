@@ -47,7 +47,7 @@ var threedee = (function(){
 	};
 
 	var consts = {
-		cylinder_radius: 2.5,
+		cylinder_radius: 3,
 		sphere_radius: 10,
 		side_length: 80,
 		tetra_height: 65
