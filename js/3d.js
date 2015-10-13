@@ -47,7 +47,7 @@ var threedee = (function(){
 	};
 
 	var consts = {
-		cylinder_radius: 3,
+		cylinder_radius: 2.5,
 		sphere_radius: 10,
 		side_length: 80,
 		tetra_height: 65
@@ -71,13 +71,13 @@ var threedee = (function(){
 
 	var geos = {
 		flatCylinder: new THREE.CylinderGeometry(
-			vals.cylinder_radius, vals.cylinder_radius, vals.side_length, 7
+			vals.cylinder_radius, vals.cylinder_radius, vals.side_length, 3
 		),
 		vertCylinder: new THREE.CylinderGeometry(
-			vals.cylinder_radius, vals.cylinder_radius, vals.vertical_side_length, 7
+			vals.cylinder_radius, vals.cylinder_radius, vals.vertical_side_length, 3
 		),
 		sphere: new THREE.SphereGeometry(
-			vals.sphere_radius, 22, 22
+			vals.sphere_radius, 15, 15
 		)
 	};
 
