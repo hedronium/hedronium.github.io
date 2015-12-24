@@ -97,7 +97,7 @@ var threedee = (function(){
 
 	var lights = {
 		ambient: function () {
-			var light = new THREE.AmbientLight(0xC4C4C4);
+			var light = new THREE.AmbientLight(0xffffff);
 			scene.add(light);
 		},
 		directional: function () {
@@ -106,7 +106,7 @@ var threedee = (function(){
 			light.position.y = 300;
 			light.position.z = 300;
 			light.castShadow = true;
-			light.shadowDarkness = 0.4;
+			light.shadowDarkness = 0.3;
 
 			light.target = plane;
 
