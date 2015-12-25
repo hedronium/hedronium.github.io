@@ -34,3 +34,42 @@ Note: Don't be an idiot. Do not add the `em` tags in the `alt` atribute for the 
 ![NIGUUH DON'T SAY A WORD](./images/faces/shishir.jpg)  
 The image should be a square jpg with `200x200 px` dimensions. Anything other 
 than a square and you will be pochafied. YOU HAVE BEEN WARNED.
+
+You should store your image in the `images/faces/` directory.
+
+### The Social Links
+Just add a anchor tag with the icon class into the `div.social` like:
+
+```HTML
+<div class="social">
+    <a href="https://facebook.com/zuck" class="icon-facebook" target="_blank"></a>
+</div>
+```
+
+Add as many links as you F***ING WANT!
+
+Available icon classes:  
+- `.icon-fivehundredpx`
+- `.icon-bitbucket`
+- `.icon-skype`
+- `.icon-twitter`
+- `.icon-github`
+- `.icon-facebook`
+- `.icon-youtube`
+- `.icon-vimeo`
+- `.icon-gplus`
+- `.icon-pinterest`
+- `.icon-foursquare`
+- `.icon-reddit`
+- `.icon-blogger`
+- `.icon-dribbble`
+- `.icon-flickr`
+- `.icon-linkedin`
+- `.icon-email`
+- `.icon-myspace`
+- `.icon-wordpress`
+- `.icon-stackoverflow`
+- `.icon-codepen`
+- `.icon-web`
+- `.icon-instagram`
+- `.icon-behance`
