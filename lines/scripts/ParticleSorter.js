@@ -1,16 +1,13 @@
 module.exports = function (particles) {
-	for (var i = 1; i < particles.length; i++) {
-		var tmp = particles[i];
-
-		for (var j = i; j > 0; j--) {
-			if (j > 0 && particles[j-1].coordinates[0] > tmp.coordinates[0]) {
-				particles[j] = particles[j-1];
-				continue;
-			}
-			
-			break;
+	particles.sort(function (a, b) {
+		if (a.coordinates[0] < b.coordinates[0]) {
+			return -1;
 		}
 
-		particles[j] = tmp;
-	}
+		if (a.coordinates[0] > b.coordinates[0]) {
+			return 1;
+		}
+
+		return 0;
+	});
 };

@@ -17,19 +17,31 @@ $(function () {
 	canvas.attr('width', width).attr('height', height);
 
 	var ctx = canvas[0].getContext('2d');
+	ctx.fillStyle = '#ffffff';
+	ctx.lineWidth = 2;
 
 
 	var animate = function () {
 		ParticleVelocity(particles, width, height, depth);
 		ParticleSorter(particles);
 
-		ctx.fillStyle = '#101010';
-		ctx.fillRect(0, 0, width, height);
-		ctx.fillStyle = '#ffffff';
+		ctx.clearRect(0, 0, width, height);
 
 		for (var i = 0; i < particles.length; i++) {
 			var lines = RadiusSearch(particles, i, radius);
 			var particle = particles[i];
+
+			
+
+			for (var j = 0; j < lines.length; j++) {
+				ctx.beginPath();
+				var line = lines[j];
+				ctx.strokeStyle = 'rgba(255, 255, 255, '+ (1-line.distance/radius) +')';
+				ctx.moveTo(particle.coordinates[0], particle.coordinates[1]);
+				ctx.lineTo(line.particle.coordinates[0], line.particle.coordinates[1]);
+				ctx.closePath();
+				ctx.stroke();
+			}
 
 			ctx.beginPath();
 			ctx.arc(
@@ -41,16 +53,7 @@ $(function () {
 			);
 
 			ctx.fill();
-
-			for (var j = 0; j < lines.length; j++) {
-				var line = lines[j];
-				ctx.strokeStyle = 'rgba(255, 255, 255, '+ (1-(line.distance/radius)) +')';
-				ctx.moveTo(particle.coordinates[0], particle.coordinates[1]);
-				ctx.lineTo(line.particle.coordinates[0], line.particle.coordinates[1]);
-			}
-
 			ctx.closePath();
-			ctx.stroke();
 		}
 
 		window.requestAnimationFrame(animate);
