@@ -1,0 +1,26 @@
+body {
+	margin: 0;
+	padding: 0;
+}
+
+canvas {
+	position: absolute;
+	top: 0;
+	left: 0;
+
+	height: 100%;
+	width: 100%;
+}
+
+h1 {
+	color: white;
+	font-family: sans-serif;
+	text-align: center;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	height: 1em;
+	font-size: 5em;
+	width: 100%;
+	margin: auto;
+}
